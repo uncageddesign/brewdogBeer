@@ -1,28 +1,42 @@
-<template>
+<template lang="html">
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+
+    <nav>
+      <router-link :to="{ name: 'home'}">Home</router-link>
+      <router-link :to="{ name: 'beers'}">Beers</router-link>
+      <router-link :to="{ name: 'favourites'}">Favourites</router-link>
+    </nav>
+    <router-view :beers="beers" id="view"></router-view>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
+import {eventBus} from './main.js'
+
+
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data(){
+    return {
+      beers: [],
+      favourites: []
+    };
+  },
+  mounted(){
+    fetch('https://api.punkapi.com/v2/beers')
+    .then(res => res.json())
+    .then(beers => this.beers = beers)
+
+    eventBus.$on("list-item", (beer) => {
+      this.favourites = beer;
+    })
+
   }
+
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="css" scoped>
 </style>
